@@ -10,7 +10,7 @@ from pwn import *
 import numpy as np
 from math import isqrt, gcd
 from fractions import Fraction
-import Crypto.Util.number
+from Crypto.Util.number import bytes_to_long, long_to_bytes
 import sympy
 
 context.log_level = "debug"
@@ -32,7 +32,7 @@ def string1(server_message):
 
 r = string1(server_message)
 
-print(f'Extracted: r:{r}')
+print(f'Extracted: {r}')
 
 def get(r):
     charset = string.ascii_letters + string.digits
@@ -52,9 +52,34 @@ result = get(r)
 print(f"找到key: {result}")
 conn.sendline(result)
 
-data = conn.recvuntil("Give me the msg you want to sign in hex: ")
-sig = "test"
+###########################################################################################
+#Here are partial source codes:
+#def sign(m, d, n):
+#    return pow(bytes_to_long(m), d, n)
+#
+#def verify(c, e, n):
+#    return 'Plz give me the flag!'  == long_to_bytes(pow(bytes_to_long(c), e, n))
+###########################################################################################
+m = b'Plz give me the flag!'
+print(bytes_to_long(m))
+conn.sendline(b'1')
+data_buf = conn.recvuntil(b'Give me the msg you want to sign in hex: ') 
 
+target = bytes_to_long(m)
+
+conn.sendline(target)
+data_buf = conn.recvuntil(b'3. Quit')
+server_message = data_buf.decode()
+print("\033[91mThe signature:\033[0m")
+print(server_message)
+
+s1 = re.findall(r'signature: [0-9a-f]+', server_message)
+s1 = int(s1[0].replace('signature: ', ''), 16)
+print(s1)
+
+sig = hex(s1).encode()
+print(f"Get sig: {sig}")
+conn.sendline(sig)
 
 conn.interactive()
 conn.close()
