@@ -1,5 +1,6 @@
 # Eulid algorithm to find gcd
 
+'''
 a = 26513
 b = 32321
 
@@ -20,3 +21,11 @@ def extended_gcd(a,b):
     
 print(gcd(a,b))
 print(extended_gcd(a,b))
+
+# print(8146798528947%17)
+
+for i in range(29):
+    if (i * i %29 == 14 or i * i %29 == 11 or i * i %29 == 6):
+        print(i)
+        print(i * i %29)
+'''
