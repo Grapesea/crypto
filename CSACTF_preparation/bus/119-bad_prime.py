@@ -9,8 +9,10 @@ from pwn import *
 import numpy as np
 from math import isqrt, gcd
 from fractions import Fraction
-import Crypto.Util.number
+from Crypto.Util.number import long_to_bytes, bytes_to_long
 import sympy
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_v1_5
 
 context.log_level = "debug"
 conn = remote("10.214.160.13", 13333)
@@ -19,7 +21,7 @@ server_message = data.decode()
 print(server_message)
 
 def string1(server_message):
-    pattern = r"sha256\(XXXX\s*\+\s*'([0-9a-zA-Z]+)'\)\s*==\s*([0-9a-f]+)"
+    pattern = r"sha256\(XXXX\s*\+\s*([0-9a-zA-Z]+)\)\s*==\s*([0-9a-f]+)"
     match = re.search(pattern, server_message, re.IGNORECASE)
 
     if match:
@@ -51,3 +53,34 @@ def getxxxx(r,s):
 result = getxxxx(r,s)
 print(f"找到的XXXX: {result}")
 conn.sendline(result)
+
+################################################################################
+'''
+Send me a cipher c so that I can calculate m=c^d modN.
+Make the decrypted message using PKCS#1 V1.5 padding.
+You'll get the flag as long as you show me "I am not a noob!"
+c=
+'''
+
+data_buf = conn.recvuntil(b'c=')
+server_message = data_buf.decode()
+print(server_message)
+
+pattern = r'N=(0x[0-9a-fA-F]+)\s+e=(0x[0-9a-fA-F]+)'
+match = re.search(pattern, server_message)
+
+if match:
+    N = int(match.group(1), 16)  # 自动处理0x前缀
+    e = int(match.group(2), 16)
+    print(N)
+    print(e)
+
+key = RSA.construct((N, e))
+cipher = PKCS1_v1_5.new(key)
+msg = "I am not a noob!"
+encrypted = cipher.encrypt(msg.encode())
+c = bytes_to_long(encrypted)
+conn.sendline(c)
+
+conn.interactive()
+conn.close()
