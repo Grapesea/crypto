@@ -1,0 +1,28 @@
+from sage.all import *
+
+e = 0x10001
+n = 0x979b0d5014e3e0b01091d5cd145c5c62f027da4592f71dbbcf114e9e94d56632832fb57a0e27d581bd86be6ef5a019781edef8e35dab664eb46efa67bdcf1b3abf5de2f21d125d6559493d7b7460f33387fc1c38329fd60c9e69803f74bb645cf11d674585b86ad9c966d0ca6fafdcf8c0c7eaddca396ab5b3a21a8ae261fa7e1915f618593352f2d7efd8eba8d1fd80074fbd66999e86bc8417761daecf2a9c446a9db93e691f277cffe870d2b781c305a9ceb71bd4191cb733f6377b7d123aa7e86e0519b484e347fb0307fc468c8006a66452a5ae90046a43ecb17fe4480aa39ca7674cbd88d837c0902c32a109b67a3d91e5ffa4cd3fbeaf305335fae207
+c = 0x82f76dce83c5156bfb205e173372c9bc074155f0548975b0bd1ea4b258e2262e8612a29331602f952e598439c6651b27d7d75822040101994fcae8120f3fe5cc2df49f221843dd02c1b14c91ea24ad51cdf7cbcd8e4961c2e03045642257365dfabeb873de2a7ea4c1e1c69e975d644fa015f0dbb149bbe99b7c592465ae5effd3cc0405ebe7dde2ec401d19d73d4c41259fc7823c060af95c20e3f553b075b7a29af786957917a45bcf5ac9196ddb87e3e78bf63f9b9d705676759effe111301b8b23d8f4aeafd8f5a337a7cc982ed306f0fb2132078a8da3de543ad14a15d74c9cc19a4a57818f9611681e023919da1832dc883d1bac97130c4dbb7b60dda
+
+N = 2**900
+'''
+Part 2
+m = bytes_to_long(flag[19:])
+p = getStrongPrime(1024)
+q = gmpy2.next_prime(p ^ ((1 << 900) - 1)) # 只留下900 bits
+n = p * q
+c = pow(m, e, n)
+print(hex(n))
+print(hex(c))
+'''
+
+R = Zmod(N)['x']
+x = R.gen()
+for delta in range(10000):
+    f = x**2 - (N+delta) * x + n 
+    X = 2**900
+    roots = f.small_roots(X = X, epsilon = 0.01, beta = 0.4)
+    print(f"找到的根 (m) 为: {roots}")
+
+
+

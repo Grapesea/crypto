@@ -77,9 +77,7 @@ s1 = re.findall(r'signature: [0-9a-f]+', server_message)
 s1 = int(s1[0].replace('signature: ', ''), 16)
 print(s1)
 
-sig = hex(s1).encode()
-print(f"Get sig: {sig}")
-conn.sendline(sig)
+
 
 conn.interactive()
 conn.close()
